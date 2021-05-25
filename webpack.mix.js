@@ -17,4 +17,4 @@ const mix = require('laravel-mix');
      processCssUrls: false,
  });;
 
-mix.browserSync('http://localhost:8000');
+// mix.browserSync('http://localhost:8000');
