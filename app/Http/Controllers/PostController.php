@@ -4,9 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Post;
+use App\Tag;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
+
+    // VALIDAZIONE
+    protected $validation = [
+        'date' => 'required|date',
+        'content' => 'required|string',
+        'image' => 'nullable|url',
+        'title' => 'required|string|max:255|unique:posts'
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -25,7 +36,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        $tags = Tag::all();
+        return view('admin.posts.create', compact('tags'));
     }
 
     /**
@@ -36,7 +48,21 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // validazione
+        $validation = $this->validation;
+        
+        $request->validate($validation);
+
+        $data = $request->all();
+
+        $newPost = Post::create($data);
+
+        // aggiungo i tags e controllo se ho effettivamente il $data['tags]
+        if (isset($data['tags'])) {
+            $newPost->tags()->attach($data['tags']);
+        }
+        // redirect
+        return redirect()->route('posts.index');
     }
 
     /**
